@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: ai-bot-mini-app
+    runtime: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-bot-db
+          property: connectionString
+      - key: ENCRYPTION_SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: WORKSPACES_DIR
+        value: /var/data/workspaces
+      - key: WEBHOOK_URL
+        value: https://ai-bot-mini-app.onrender.com
+      - key: GROUP_TARGET_NAMES
+        value: jack,ken
+    disk:
+      name: workspaces
+      mountPath: /var/data/workspaces
+      sizeGB: 1
+
+databases:
+  - name: ai-bot-db
+    plan: free

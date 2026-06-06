@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Bot</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div id="app-header">
+            <button id="btn-back" class="btn-icon hidden" onclick="App.goBack()">←</button>
+            <span id="header-title">AI Bot</span>
+            <div id="header-spacer"></div>
+        </div>
+        <div id="app-content"></div>
+        <div id="app-nav">
+            <button class="nav-btn active" data-page="chat" onclick="App.navigate('chat')">
+                <span class="nav-icon">💬</span><span class="nav-label">Чат</span>
+            </button>
+            <button class="nav-btn" data-page="providers" onclick="App.navigate('providers')">
+                <span class="nav-icon">📡</span><span class="nav-label">Провайдеры</span>
+            </button>
+            <button class="nav-btn" data-page="projects" onclick="App.navigate('projects')">
+                <span class="nav-icon">📁</span><span class="nav-label">Вайб</span>
+            </button>
+            <button class="nav-btn" data-page="settings" onclick="App.navigate('settings')">
+                <span class="nav-icon">⚙️</span><span class="nav-label">Ещё</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="modal-overlay" class="hidden" onclick="Modal.close()">
+        <div id="modal-box" onclick="event.stopPropagation()">
+            <div id="modal-header">
+                <span id="modal-title"></span>
+                <button class="btn-icon" onclick="Modal.close()">✕</button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="hidden"></div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/providers.js"></script>
+    <script src="js/projects.js"></script>
+    <script src="js/terminal.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
