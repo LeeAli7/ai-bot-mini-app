@@ -45,6 +45,17 @@ async def lifespan(app: FastAPI):
         await bot.set_webhook(webhook_url)
         logger.info(f"Webhook set to {webhook_url}")
 
+    # Setup Telegram Menu Button (opens Mini App)
+    if WEBHOOK_URL:
+        from aiogram.types import MenuButtonWebApp, WebAppInfo
+        await bot.set_chat_menu_button(
+            menu_button=MenuButtonWebApp(
+                text="Открыть",
+                web_app=WebAppInfo(url=WEBHOOK_URL.rstrip('/'))
+            )
+        )
+        logger.info("Menu button set to Mini App URL: %s", WEBHOOK_URL)
+
     await bot.session.close()
 
     yield
