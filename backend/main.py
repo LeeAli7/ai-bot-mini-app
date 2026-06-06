@@ -84,11 +84,23 @@ app.include_router(terminal_router)
 from bot.webhook import setup_webhook
 setup_webhook(app)
 
-# Static files (frontend) — mounted last
+# Static files (frontend) — serve CSS/JS at /css/ and /js/ paths
 frontend_path = Path(str(STATIC_DIR))
 if frontend_path.exists():
-    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="static")
-    logger.info(f"Static files mounted from {frontend_path}")
+    css_path = frontend_path / "css"
+    js_path = frontend_path / "js"
+    if css_path.exists():
+        app.mount("/css", StaticFiles(directory=str(css_path)), name="css")
+    if js_path.exists():
+        app.mount("/js", StaticFiles(directory=str(js_path)), name="js")
+
+    from fastapi.responses import FileResponse
+
+    @app.get("/")
+    async def index():
+        return FileResponse(str(frontend_path / "index.html"))
+
+    logger.info(f"Static files configured from {frontend_path}")
 else:
     @app.get("/")
     async def root():
