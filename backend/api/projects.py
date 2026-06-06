@@ -263,7 +263,7 @@ async def project_chat(
     history = json.loads(vibe_session.history_json)
 
     # Build messages for AI with vibe system prompt
-    from services.ai_client import AIProvider
+    from services.ai_client import AIProvider, normalize_temperature
 
     api_key = provider.get_api_key()
     ai = AIProvider(
@@ -271,7 +271,7 @@ async def project_chat(
         api_key=api_key,
         model=provider.model,
         system_prompt=system_prompt,
-        temperature=provider.temperature,
+        temperature=normalize_temperature(provider.temperature),
         context_length=provider.context_length,
     )
 
@@ -340,7 +340,7 @@ async def project_chat_stream(
 
     history = json.loads(vibe_session.history_json)
 
-    from services.ai_client import AIProvider
+    from services.ai_client import AIProvider, normalize_temperature
 
     api_key = provider.get_api_key()
     ai = AIProvider(
@@ -348,7 +348,7 @@ async def project_chat_stream(
         api_key=api_key,
         model=provider.model,
         system_prompt=system_prompt,
-        temperature=provider.temperature,
+        temperature=normalize_temperature(provider.temperature),
         context_length=provider.context_length,
     )
 

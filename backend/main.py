@@ -31,14 +31,21 @@ async def lifespan(app: FastAPI):
     from services.vibe import cleanup_orphans
     cleanup_orphans()
 
+    # Setup bot username (must happen before first webhook update)
+    from aiogram import Bot
+    bot = Bot(token=BOT_TOKEN)
+    bot_info = await bot.get_me()
+    from bot.bot_app import set_bot_username
+    set_bot_username(bot_info.username)
+    logger.info("Bot username: @%s", bot_info.username)
+
     # Setup bot webhook
     if WEBHOOK_URL:
-        from aiogram import Bot
-        bot = Bot(token=BOT_TOKEN)
         webhook_url = f"{WEBHOOK_URL.rstrip('/')}{WEBHOOK_PATH}"
         await bot.set_webhook(webhook_url)
         logger.info(f"Webhook set to {webhook_url}")
-        await bot.session.close()
+
+    await bot.session.close()
 
     yield
 
@@ -56,7 +63,6 @@ app = FastAPI(title="AI Bot Mini App", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

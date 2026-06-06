@@ -108,7 +108,23 @@ const ProjectsPage = {
     },
 
     async downloadZip(id) {
-        window.open(`${API._base}/api/projects/${id}/zip?token=${API._token}`, '_blank');
+        try {
+            const res = await fetch(`${API._base}/api/projects/${id}/zip`, {
+                headers: { 'Authorization': `Bearer ${API._token}` },
+            });
+            if (!res.ok) throw new Error('Download failed');
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = (this._activeProjectName || 'project') + '.zip';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (e) {
+            Toast.show('Ошибка скачивания: ' + e.message);
+        }
     },
 
     importZip() {

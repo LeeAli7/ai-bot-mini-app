@@ -40,7 +40,7 @@ const App = {
             const ok = await Auth.loginViaTelegram();
             if (!ok) {
                 document.getElementById('app-content').innerHTML =
-                    '<div class="empty-state" style="padding-top:60px"><div class="empty-icon">🔒</div><p>Откройте Mini App через Telegram</p></div>';
+                    '<div class="empty-state" style="padding-top:60px"><div class="empty-icon">🔒</div><p>Откройте Mini App через Telegram</p><button class="btn btn-primary" style="margin-top:16px" onclick="App.boot()">🔄 Попробовать снова</button></div>';
                 return;
             }
         }

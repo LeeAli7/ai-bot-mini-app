@@ -189,6 +189,13 @@ class AIProvider:
                 yield (f"⚠️ Ошибка подключения: {last_error}", "")
 
 
+def normalize_temperature(temperature: float) -> float:
+    """Convert from internal int*10 representation (7 = 0.7) to API float if needed."""
+    if temperature > 2:
+        return temperature / 10.0
+    return float(temperature)
+
+
 async def send_message(
     provider: Provider,
     history: list[Message],
@@ -201,7 +208,7 @@ async def send_message(
         api_key=api_key,
         model=provider.model,
         system_prompt=provider.system_prompt or "You are a helpful AI assistant.",
-        temperature=provider.temperature,
+        temperature=normalize_temperature(provider.temperature),
         context_length=provider.context_length,
     )
 
@@ -220,7 +227,7 @@ async def send_message_stream(
         api_key=api_key,
         model=provider.model,
         system_prompt=provider.system_prompt or "You are a helpful AI assistant.",
-        temperature=provider.temperature,
+        temperature=normalize_temperature(provider.temperature),
         context_length=provider.context_length,
     )
 

@@ -13,14 +13,19 @@ logger = logging.getLogger(__name__)
 _dp: Dispatcher | None = None
 
 
+_bot_username: str | None = None
+
+
+def set_bot_username(username: str) -> None:
+    """Set bot username (with @ prefix) before first webhook update."""
+    global _bot_username
+    _bot_username = f"@{username.lstrip('@')}"
+
+
 def get_dispatcher() -> Dispatcher:
     global _dp
     if _dp is not None:
         return _dp
-
-    from aiogram import Bot
-    from aiogram.client.default import DefaultBotProperties
-    from aiogram.enums import ParseMode
 
     # Import handlers (register themselves on the router)
     from bot.handlers.common import router as common_router
@@ -43,18 +48,8 @@ def get_dispatcher() -> Dispatcher:
     _dp.update.middleware(DbSessionMiddleware(AsyncSessionFactory))
     _dp.callback_query.middleware(DbSessionMiddleware(AsyncSessionFactory))
 
-    # Inject bot_username
-    async def on_startup():
-        bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-        _dp["bot_username"] = (await bot.get_me()).username
-        await bot.session.close()
+    # Inject bot_username (set by main.py lifespan before first webhook)
+    _dp["bot_username"] = _bot_username
 
-    import asyncio
-    try:
-        loop = asyncio.get_running_loop()
-        loop.create_task(on_startup())
-    except RuntimeError:
-        pass
-
-    logger.info("Bot dispatcher initialized")
+    logger.info("Bot dispatcher initialized (bot_username=%s)", _bot_username)
     return _dp
